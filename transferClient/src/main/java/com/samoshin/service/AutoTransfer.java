@@ -16,11 +16,7 @@ public class AutoTransfer implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < operationsNumber; i++) {
-            try {
                 client.addMoney(1L, (long)(Math.random()*1000));
-            } catch (Exception e) {
-                System.out.println("Bad try to add money");
-            }
         }
         checkConsistency();
     }
