@@ -10,9 +10,7 @@ import com.samoshin.moneybox.model.Moneybox;
 import com.samoshin.moneybox.repository.MoneyTransferRepository;
 import com.samoshin.moneybox.repository.MoneyboxRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -23,8 +21,9 @@ public class MoneyTransferService {
     private final MoneyboxDtoMapper moneyboxDtoMapper;
     private final MoneyTransferDtoMapper transferDtoMapper;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-//    @Retryable(maxAttempts = 15)
+
+
+    @Transactional
     public MoneyTransferDto makeTransaction(Long moneyboxId, Long transactionSum, Boolean increase) {
         Moneybox moneybox = getMoneyboxById(moneyboxId);
         MoneyTransfer transfer = moneyTransferRepository.save(
@@ -42,6 +41,7 @@ public class MoneyTransferService {
         return transferDtoMapper.mapToDto(transfer);
     }
 
+    @Transactional
     public MoneyboxDto getInfo(Long moneyboxId) {
         Moneybox moneybox = getMoneyboxById(moneyboxId);
         return moneyboxDtoMapper.mapToDto(moneybox);

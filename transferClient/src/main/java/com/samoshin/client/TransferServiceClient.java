@@ -13,21 +13,11 @@ public class TransferServiceClient {
     private final WebClient webClient = WebClient.create(URL);
 
     public MoneyTransferDto addMoney(Long moneyboxId, Long sum) throws RuntimeException{
-        MoneyTransferDto transferDto = null;
-
-        for (int i = 0; i < TRY_LIMIT; i++) {
-            try {
-                transferDto = webClient.post()
-                        .uri(URL + "/" + moneyboxId + "/add/" + sum)
-                        .retrieve()
-                        .bodyToMono(MoneyTransferDto.class)
-                        .block();
-                return transferDto;
-            } catch (Exception e) {
-                System.out.println("Try " + (i + 1) + ": money was no added");
-            }
-        }
-        throw new RuntimeException("ERROR: Money was no added after " + TRY_LIMIT + " tries");
+        return webClient.post()
+                .uri(URL + "/" + moneyboxId + "/add/" + sum)
+                .retrieve()
+                .bodyToMono(MoneyTransferDto.class)
+                .block();
     }
 
     public MoneyTransferDto subtractMoney(Long moneyboxId, Long sum) {
