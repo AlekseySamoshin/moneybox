@@ -1,18 +1,18 @@
 package com.samoshin.client;
 
-import com.samoshin.moneybox.dto.MoneyTransferDto;
-import com.samoshin.moneybox.dto.MoneyboxDto;
+import com.samoshin.dto.MoneyTransferDto;
+import com.samoshin.dto.MoneyboxDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class TransferServiceClient {
-    private static final Integer TRY_LIMIT = 15;
     private static final String URL = "http://localhost:8080/moneybox";
 
     private final WebClient webClient = WebClient.create(URL);
 
     public MoneyTransferDto addMoney(Long moneyboxId, Long sum) throws RuntimeException{
+        System.out.println("Client: add money " + sum);
         return webClient.post()
                 .uri(URL + "/" + moneyboxId + "/add/" + sum)
                 .retrieve()

@@ -1,8 +1,8 @@
 package com.samoshin.service;
 
 import com.samoshin.client.TransferServiceClient;
-import com.samoshin.moneybox.dto.MoneyTransferDto;
-import com.samoshin.moneybox.dto.MoneyboxDto;
+import com.samoshin.dto.MoneyTransferDto;
+import com.samoshin.dto.MoneyboxDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
