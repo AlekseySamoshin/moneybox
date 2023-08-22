@@ -20,23 +20,28 @@ public class MoneyTransferService {
     private final MoneyTransferRepository moneyTransferRepository;
     private final MoneyboxDtoMapper moneyboxDtoMapper;
     private final MoneyTransferDtoMapper transferDtoMapper;
+    private final KafkaTransferProducerService kafkaTransferProducerService;
 
 
+
+    public MoneyTransferDto sendTransfer(Long moneyboxId, Long sum, Boolean increase) {
+        MoneyTransfer transfer = MoneyTransfer.builder()
+                .moneyboxId(moneyboxId)
+                .sum(sum)
+                .increase(increase)
+                .build();
+        transfer = kafkaTransferProducerService.sendTransfer(transfer);
+        return transferDtoMapper.mapToDto(transfer);
+    }
 
     @Transactional
-    public MoneyTransferDto makeTransaction(Long moneyboxId, Long transactionSum, Boolean increase) {
-        Moneybox moneybox = getMoneyboxById(moneyboxId);
-        MoneyTransfer transfer = moneyTransferRepository.save(
-                MoneyTransfer.builder()
-                        .moneyboxId(moneyboxId)
-                        .sum(transactionSum)
-                        .increase(increase)
-                        .build()
-        );
-        if(increase) {
-            moneybox.setSum(moneybox.getSum() + transactionSum);
+    public MoneyTransferDto makeTransaction(MoneyTransfer transfer) {
+        Moneybox moneybox = getMoneyboxById(transfer.getMoneyboxId());
+        transfer = moneyTransferRepository.save(transfer);
+        if(transfer.isIncrease()) {
+            moneybox.setSum(moneybox.getSum() + transfer.getSum());
         } else {
-            moneybox.setSum(moneybox.getSum() - transactionSum);
+            moneybox.setSum(moneybox.getSum() - transfer.getSum());
         }
         return transferDtoMapper.mapToDto(transfer);
     }

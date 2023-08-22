@@ -32,7 +32,7 @@ public class AutoTransfer implements Runnable {
             System.out.println("ERROR! No matching: \nmoneybox record is " + moneybox.sum()
                                 + "\nsum of transfers is " + transfersSum);
         } else {
-            System.out.println("CONSISTENT!");
+            System.out.println("CONSISTENT! (" + moneybox.sum() + " - " + transfersSum +")");
         }
     }
 }

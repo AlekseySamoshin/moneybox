@@ -18,7 +18,7 @@ public class MoneyTransfer {
     @Column(name = "moneybox_id")
     private Long moneyboxId;
 
-    private Boolean increase;
+    private boolean increase;
 
     private Long sum;
 }

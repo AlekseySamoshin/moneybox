@@ -10,7 +10,7 @@ public class MoneyTransferDtoMapper {
         return new MoneyTransferDto(
                 transfer.getId(),
                 transfer.getMoneyboxId(),
-                transfer.getIncrease(),
+                transfer.isIncrease(),
                 transfer.getSum());
     }
 }

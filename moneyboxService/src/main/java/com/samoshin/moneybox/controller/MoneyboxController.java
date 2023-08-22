@@ -16,14 +16,14 @@ public class MoneyboxController {
     MoneyTransferDto addMoney(@PathVariable Long moneyboxId,
                               @PathVariable Long sum) {
         Boolean increase = true;
-        return moneyTransferService.makeTransaction(moneyboxId, sum, increase);
+        return moneyTransferService.sendTransfer(moneyboxId, sum, increase);
     }
 
     @PostMapping("/{moneyboxId}/subtract/{sum}")
     MoneyTransferDto subtractMoney(@PathVariable Long moneyboxId,
                                    @PathVariable Long sum) {
         Boolean increase = false;
-        return moneyTransferService.makeTransaction(moneyboxId, sum, increase);
+        return moneyTransferService.sendTransfer(moneyboxId, sum, increase);
     }
 
     @GetMapping("/{moneyboxId}")
