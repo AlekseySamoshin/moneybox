@@ -17,7 +17,7 @@ public class AutoTransfer implements Runnable {
     public void run() {
         for (int i = 0; i < operationsNumber; i++) {
                 client.addMoney(1L, (long)(Math.random()*1000));
-                client.subtractMoney(1L, (long)(Math.random()*1000));
+                client.subtractMoney(1L, (long)(Math.random()*500));
         }
         checkConsistency();
     }
