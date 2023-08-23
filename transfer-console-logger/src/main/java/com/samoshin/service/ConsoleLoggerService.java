@@ -6,11 +6,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ConsoleLoggerService {
+    private Integer transferCounter = 0;
     private Long totalAmount = 0L;
 
     @KafkaListener(topics = "${kafka.topic-name}", groupId = "${spring.kafka.consumer.group-id}")
     public void log(MoneyTransferDto transfer) {
-        System.out.print("money transfer: ");
+        System.out.print("money transfer #" + (transferCounter+=1) + ": ");
         if (transfer.isIncrease()) {
             System.out.print("add ");
             totalAmount += transfer.getSum();
