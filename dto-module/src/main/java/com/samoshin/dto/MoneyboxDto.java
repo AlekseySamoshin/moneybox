@@ -1,6 +1,15 @@
 package com.samoshin.dto;
 
+import lombok.*;
+
 import java.util.List;
 
-public record MoneyboxDto(Long id, Long sum, List<MoneyTransferDto> transfers) {
+@Getter
+@Setter
+@RequiredArgsConstructor
+@NoArgsConstructor(force = true)
+public class MoneyboxDto {
+    private final Long id;
+    private final Long sum;
+    private final List<MoneyTransferDto> transfers;
 }

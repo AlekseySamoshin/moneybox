@@ -1,4 +1,4 @@
-package com.samoshin.service;
+package com.samoshin.moneybox.service;
 
 import com.samoshin.dto.MoneyTransferDto;
 import lombok.RequiredArgsConstructor;

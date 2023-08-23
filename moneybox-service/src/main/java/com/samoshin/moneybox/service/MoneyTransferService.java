@@ -1,5 +1,6 @@
 package com.samoshin.moneybox.service;
 
+
 import com.samoshin.dto.MoneyTransferDto;
 import com.samoshin.dto.MoneyboxDto;
 import com.samoshin.moneybox.exception.NotFoundException;
@@ -9,7 +10,6 @@ import com.samoshin.moneybox.model.MoneyTransfer;
 import com.samoshin.moneybox.model.Moneybox;
 import com.samoshin.moneybox.repository.MoneyTransferRepository;
 import com.samoshin.moneybox.repository.MoneyboxRepository;
-import com.samoshin.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class MoneyTransferService {
 
     @Transactional
     public MoneyTransferDto makeTransaction(MoneyTransferDto transferDto) {
-        Moneybox moneybox = getMoneyboxById(transferDto.moneyboxId());
+        Moneybox moneybox = getMoneyboxById(transferDto.getMoneyboxId());
         MoneyTransfer transfer = moneyTransferRepository.save(transferDtoMapper.mapToTransfer(transferDto));
         if(transfer.isIncrease()) {
             moneybox.setSum(moneybox.getSum() + transfer.getSum());

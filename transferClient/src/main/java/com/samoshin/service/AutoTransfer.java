@@ -25,14 +25,14 @@ public class AutoTransfer implements Runnable {
     public void checkConsistency() {
         long transfersSum = 0L;
         MoneyboxDto moneybox = client.getInfo(1L);
-        for (MoneyTransferDto transfer : moneybox.transfers()) {
-            transfersSum = transfer.increase() ? transfersSum + transfer.sum() : transfersSum - transfer.sum();
+        for (MoneyTransferDto transfer : moneybox.getTransfers()) {
+            transfersSum = transfer.isIncrease() ? transfersSum + transfer.getSum() : transfersSum - transfer.getSum();
         }
-        if (transfersSum != moneybox.sum().longValue()) {
-            System.out.println("ERROR! No matching: \nmoneybox record is " + moneybox.sum()
+        if (transfersSum != moneybox.getSum().longValue()) {
+            System.out.println("ERROR! No matching: \nmoneybox record is " + moneybox.getSum()
                                 + "\nsum of transfers is " + transfersSum);
         } else {
-            System.out.println("CONSISTENT! (" + moneybox.sum() + " - " + transfersSum +")");
+            System.out.println("CONSISTENT! (" + moneybox.getSum() + " - " + transfersSum +")");
         }
     }
 }

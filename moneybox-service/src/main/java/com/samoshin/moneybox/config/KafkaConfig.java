@@ -1,4 +1,4 @@
-package com.samoshin.service.config;
+package com.samoshin.moneybox.config;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -15,7 +15,7 @@ public class KafkaConfig {
     @Bean
     public NewTopic topic() {
         return TopicBuilder.name(topicName)
-                .partitions(1)
+                .partitions(10)
                 .replicas(1)
                 .build();
     }

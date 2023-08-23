@@ -7,7 +7,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 
 @EnableKafka
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.samoshin"})
+//@ComponentScan(basePackages = {"com.samoshin"})
 public class MoneyboxApplication {
 
 	public static void main(String[] args) {

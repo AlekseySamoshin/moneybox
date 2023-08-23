@@ -1,7 +1,6 @@
-package com.samoshin.service;
+package com.samoshin.moneybox.service;
 
 import com.samoshin.dto.MoneyTransferDto;
-import com.samoshin.moneybox.service.MoneyTransferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
