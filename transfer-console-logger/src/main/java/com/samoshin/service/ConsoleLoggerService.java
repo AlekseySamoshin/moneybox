@@ -9,7 +9,7 @@ public class ConsoleLoggerService {
     private Integer transferCounter = 0;
     private Long totalAmount = 0L;
 
-    @KafkaListener(topics = "${kafka.topic-name}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${kafka.topic-name}", groupId = "${spring.kafka.consumer.group-id}", concurrency = "3")
     public void log(MoneyTransferDto transfer) {
         System.out.print("money transfer #" + (transferCounter+=1) + ": ");
         if (transfer.isIncrease()) {

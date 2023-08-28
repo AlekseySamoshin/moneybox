@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class AutoTransfer implements Runnable {
     private final TransferServiceClient client;
 
-    private Integer operationsNumber = 50;
+    private Integer operationsNumber = 1000;
 
     @Override
     public void run() {
