@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumerService {
     private final MoneyTransferService moneyTransferService;
 
-    @KafkaListener(topics = "${kafka.topic-name}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${kafka.topic-name}", groupId = "${spring.kafka.consumer.group-id}")//, concurrency = "3")
     public MoneyTransferDto consumeTransfer(MoneyTransferDto transferDto) {
         return moneyTransferService.makeTransaction(transferDto);
     }

@@ -10,9 +10,10 @@ public class TransferServiceClient {
     private static final String URL = "http://localhost:8080/moneybox";
 
     private final WebClient webClient = WebClient.create(URL);
+    Integer callsCounter = 0;
 
     public MoneyTransferDto addMoney(Long moneyboxId, Long sum) throws RuntimeException{
-        System.out.println("Client: add money " + sum);
+        System.out.println(++callsCounter + " Client: add money " + sum);
         return webClient.post()
                 .uri(URL + "/" + moneyboxId + "/add/" + sum)
                 .retrieve()
@@ -21,6 +22,7 @@ public class TransferServiceClient {
     }
 
     public MoneyTransferDto subtractMoney(Long moneyboxId, Long sum) {
+        System.out.println(++callsCounter + " Client: subtract money " + sum);
         return webClient.post()
                 .uri(URL + "/" + moneyboxId + "/subtract/" + sum)
                 .retrieve()
