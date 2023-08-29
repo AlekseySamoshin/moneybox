@@ -2,9 +2,11 @@ package com.samoshin.client;
 
 import com.samoshin.dto.MoneyTransferDto;
 import com.samoshin.dto.MoneyboxDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@Slf4j
 @Service
 public class TransferServiceClient {
     private static final String URL = "http://localhost:8080/moneybox";
@@ -13,7 +15,10 @@ public class TransferServiceClient {
     private Integer callsCounter = 0;
 
     public MoneyTransferDto addMoney(Long moneyboxId, Long sum) throws RuntimeException{
-        System.out.println(++callsCounter + " Client: add money " + sum);
+        log.info("{} Transfer Service Client: add money request sending[moneyboxId={}, sum={}]",
+                ++callsCounter,
+                moneyboxId,
+                sum);
         return webClient.post()
                 .uri(URL + "/" + moneyboxId + "/add/" + sum)
                 .retrieve()
@@ -22,7 +27,10 @@ public class TransferServiceClient {
     }
 
     public MoneyTransferDto subtractMoney(Long moneyboxId, Long sum) {
-        System.out.println(++callsCounter + " Client: subtract money " + sum);
+        log.info("{} Transfer Service Client: subtract money request sending[moneyboxId={}, sum={}]",
+                ++callsCounter,
+                moneyboxId,
+                sum);
         return webClient.post()
                 .uri(URL + "/" + moneyboxId + "/subtract/" + sum)
                 .retrieve()
@@ -31,6 +39,7 @@ public class TransferServiceClient {
     }
 
     public MoneyboxDto getInfo(Long moneyboxId) {
+        log.info("Transfer Service Client: get info request sending; moneyboxId={}", moneyboxId);
         return webClient.get()
                 .uri(URL + "/" + moneyboxId)
                 .retrieve()

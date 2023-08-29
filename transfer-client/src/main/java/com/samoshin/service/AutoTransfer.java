@@ -4,8 +4,10 @@ import com.samoshin.client.TransferServiceClient;
 import com.samoshin.dto.MoneyTransferDto;
 import com.samoshin.dto.MoneyboxDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AutoTransfer implements Runnable {
@@ -29,10 +31,11 @@ public class AutoTransfer implements Runnable {
             transfersSum = transfer.isIncrease() ? transfersSum + transfer.getSum() : transfersSum - transfer.getSum();
         }
         if (transfersSum != moneybox.getSum().longValue()) {
-            System.out.println("ERROR! No matching: \nmoneybox record is " + moneybox.getSum()
-                                + "\nsum of transfers is " + transfersSum);
+            log.error("DATABASE IS IN A NON-CONSISTENT STATE: moneybox record is {}; sum of transfers is {}",
+                    moneybox.getSum(),
+                    transfersSum);
         } else {
-            System.out.println("CONSISTENT! (" + moneybox.getSum() + " - " + transfersSum +")");
+            log.info("Database is consistent: {} - {}", moneybox.getSum(), transfersSum);
         }
     }
 }
