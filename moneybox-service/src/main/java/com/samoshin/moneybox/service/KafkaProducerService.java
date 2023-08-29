@@ -2,10 +2,12 @@ package com.samoshin.moneybox.service;
 
 import com.samoshin.dto.MoneyTransferDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KafkaProducerService {
@@ -18,8 +20,9 @@ public class KafkaProducerService {
         try {
             kafkaTemplate.send(topicName, transfer);
         } catch(Exception e) {
-            System.out.print("ERROR on money transfer: \n" + e.toString() + "\n");
+            log.error("Money transfer error: " + e.toString());
         }
+        log.info("Kafka Producer Service: Money transfer request has been sent to Kafka broker: {}", transfer);
         return transfer;
     }
 }
