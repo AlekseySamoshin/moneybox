@@ -10,7 +10,7 @@ public class TransferServiceClient {
     private static final String URL = "http://localhost:8080/moneybox";
 
     private final WebClient webClient = WebClient.create(URL);
-    Integer callsCounter = 0;
+    private Integer callsCounter = 0;
 
     public MoneyTransferDto addMoney(Long moneyboxId, Long sum) throws RuntimeException{
         System.out.println(++callsCounter + " Client: add money " + sum);

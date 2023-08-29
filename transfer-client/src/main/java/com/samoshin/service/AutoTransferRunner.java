@@ -28,9 +28,9 @@ public class AutoTransferRunner {
         Thread thread6 = new Thread(autoTransfer6);
         Thread thread7 = new Thread(autoTransfer7);
         thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
+//        thread2.start();
+//        thread3.start();
+//        thread4.start();
 //        thread5.start();
 //        thread6.start();
 //        thread7.start();

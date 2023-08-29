@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaConsumerService {
     private final MoneyTransferService moneyTransferService;
+    Integer counter = 0;
 
     @KafkaListener(
             topics = "${kafka.topic-name}",
@@ -19,7 +20,9 @@ public class KafkaConsumerService {
             containerFactory = "kafkaListenerContainerFactory")
     public MoneyTransferDto consumeTransfer(@Payload MoneyTransferDto transferDto, Acknowledgment acknowledgment) {
         transferDto = moneyTransferService.makeTransaction(transferDto);
+        System.out.println("Transaction " + ++counter + " to database is done");
         acknowledgment.acknowledge();
+        System.out.println("Acknowledge " + counter + " done");
         return transferDto;
     }
 }
