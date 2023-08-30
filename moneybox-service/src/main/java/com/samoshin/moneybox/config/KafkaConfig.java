@@ -35,6 +35,7 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.CLIENT_ID_CONFIG, "moneyboxProducer");
         configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
         configProps.put(ProducerConfig.ACKS_CONFIG, "all");
+//        configProps.put(ProducerConfig.RETRIES_CONFIG, "3");
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

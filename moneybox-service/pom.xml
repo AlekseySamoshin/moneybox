@@ -28,7 +28,6 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.retry/spring-retry -->
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
@@ -40,7 +39,6 @@
             <artifactId>dto-module</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
 
     </dependencies>
 </project>

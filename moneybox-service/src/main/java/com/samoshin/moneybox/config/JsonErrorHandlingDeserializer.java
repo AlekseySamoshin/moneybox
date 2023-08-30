@@ -10,7 +10,7 @@ public class JsonErrorHandlingDeserializer<T> implements Deserializer<T> {
 
     public JsonErrorHandlingDeserializer(Class<T> targetType) {
         JsonDeserializer<T> jsonDeserializer = new JsonDeserializer<>(targetType);
-        jsonDeserializer.addTrustedPackages("*"); // Добавьте пакеты, которые вы считаете доверенными
+        jsonDeserializer.addTrustedPackages("*");
         this.errorHandlingDeserializer = new ErrorHandlingDeserializer<>(jsonDeserializer);
     }
 

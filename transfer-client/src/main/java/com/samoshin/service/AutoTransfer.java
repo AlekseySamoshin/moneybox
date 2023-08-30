@@ -13,13 +13,23 @@ import org.springframework.stereotype.Component;
 public class AutoTransfer implements Runnable {
     private final TransferServiceClient client;
 
-    private Integer operationsNumber = 1000;
+    private Integer requestsQuantity = 1000;
 
     @Override
     public void run() {
-        for (int i = 0; i < operationsNumber; i++) {
+        for (int i = 0; i < requestsQuantity; i++) {
                 client.addMoney(1L, (long)(Math.random()*1000));
+                try{
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("Wake up, Neo");
+                }
                 client.subtractMoney(1L, (long)(Math.random()*500));
+            try{
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                System.out.println("The Matrix has you");
+            }
         }
         checkConsistency();
     }
