@@ -1,4 +1,4 @@
-package com.samoshin.moneybox.config;
+package com.samoshin.config;
 
 import com.samoshin.dto.MoneyTransferDto;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -27,19 +27,6 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, MoneyTransferDto> producerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092,localhost:29093,localhost:29094");
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        configProps.put(ProducerConfig.CLIENT_ID_CONFIG, "moneyboxProducer");
-        configProps.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
-        configProps.put(ProducerConfig.ACKS_CONFIG, "all");
-//        configProps.put(ProducerConfig.RETRIES_CONFIG, "3");
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-
-    @Bean
     public ConsumerFactory<String, MoneyTransferDto> consumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092,localhost:29093,localhost:29094");
@@ -51,19 +38,6 @@ public class KafkaConfig {
                 new StringDeserializer(),
                 new JsonErrorHandlingDeserializer<>(MoneyTransferDto.class)
         );
-    }
-
-    @Bean
-    public NewTopic topic() {
-        return TopicBuilder.name("${kafka.topic-name}")
-                .partitions(10)
-                .replicas(2)
-                .build();
-    }
-
-    @Bean
-    public KafkaTemplate<String, MoneyTransferDto> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean

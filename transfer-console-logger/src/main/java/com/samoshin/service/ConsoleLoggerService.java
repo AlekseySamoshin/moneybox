@@ -13,19 +13,21 @@ public class ConsoleLoggerService {
 
     @KafkaListener(
             topics = "${kafka.topic-name}",
-            groupId = "${spring.kafka.consumer.group-id}",
-            concurrency = "3")
-    public void log(@Payload MoneyTransferDto transfer, Acknowledgment acknowledgment) {
+            groupId = "${kafka.group-id}",
+            concurrency = "3",
+            containerFactory = "kafkaListenerContainerFactory")
+    public void log(@Payload MoneyTransferDto transferDto, Acknowledgment acknowledgment) {
         System.out.print("money transfer #" + (++transferCounter) + ": ");
-        if (transfer.isIncrease()) {
+        if (transferDto.isIncrease()) {
             System.out.print("add ");
-            totalAmount += transfer.getSum();
+            totalAmount += transferDto.getSum();
         } else {
             System.out.print("subtract ");
-            totalAmount -= transfer.getSum();
+            totalAmount -= transferDto.getSum();
         }
-        System.out.print(transfer.getSum());
+        System.out.print(transferDto.getSum());
         System.out.println("; total amount: " + totalAmount);
         acknowledgment.acknowledge();
+        return;
     }
 }
