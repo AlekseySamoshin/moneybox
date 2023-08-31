@@ -1,11 +1,13 @@
 package com.samoshin.service;
 
 import com.samoshin.dto.MoneyTransferDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class ConsoleLoggerService {
     private Integer transferCounter = 0;
@@ -28,6 +30,5 @@ public class ConsoleLoggerService {
         System.out.print(transferDto.getSum());
         System.out.println("; total amount: " + totalAmount);
         acknowledgment.acknowledge();
-        return;
     }
 }
