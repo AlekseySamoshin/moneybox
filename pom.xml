@@ -15,10 +15,10 @@
     <name>moneybox</name>
     <description>api and transactional service</description>
     <modules>
+        <module>dto-module</module>
         <module>transfer-client</module>
         <module>moneybox-service</module>
         <module>moneybox-service2</module>
-        <module>dto-module</module>
         <module>transfer-console-logger</module>
     </modules>
     <properties>
