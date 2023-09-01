@@ -34,14 +34,14 @@ public class MoneyTransferService {
         return transferDtoMapper.mapToDto(transfer);
     }
 
+    public MoneyboxDto getInfo(String moneyboxId) {
+        Long moneyboxIdLong = Long.parseLong(moneyboxId);
+        return moneyboxDtoMapper.mapToDto(getMoneyboxById(moneyboxIdLong));
+    }
+
     private Moneybox getMoneyboxById(Long moneyboxId) {
         return moneyboxRepository.findById(moneyboxId).orElseThrow(
                 () -> new NotFoundException("moneybox id=" + moneyboxId + " not found")
         );
-    }
-
-    public MoneyboxDto getInfo(String moneyboxId) {
-        Long moneyboxIdLong = Long.parseLong(moneyboxId);
-        return moneyboxDtoMapper.mapToDto(getMoneyboxById(moneyboxIdLong));
     }
 }
