@@ -17,7 +17,7 @@ public class KafkaConsumerService {
     Integer counter = 0;
 
     @KafkaListener(
-            topics = "${kafka.topic-name}",
+            topics = "${transfer-topic-name}",
             groupId = "${kafka.group-id}",
             concurrency = "3",
             containerFactory = "kafkaListenerContainerFactory")

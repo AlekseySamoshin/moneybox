@@ -16,7 +16,7 @@
     <description>api and transactional service</description>
     <modules>
         <module>dto-module</module>
-        <module>transfer-client</module>
+        <module>auto-transfer-client</module>
         <module>moneybox-gateway</module>
         <module>transfer-console-logger</module>
         <module>moneybox-server</module>
