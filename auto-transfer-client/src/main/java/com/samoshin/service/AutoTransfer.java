@@ -12,19 +12,20 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AutoTransfer implements Runnable {
     private final TransferServiceClient client;
+    private long transferSum = 0;
 
     private Integer requestsQuantity = 1000;
 
     @Override
     public void run() {
         for (int i = 0; i < requestsQuantity; i++) {
-                client.addMoney(1L, (long)(Math.random()*1000));
+                client.addMoney(1L, ++transferSum);//(long)(Math.random()*1000));
                 try{
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                     System.out.println("Wake up, Neo");
                 }
-                client.subtractMoney(1L, (long)(Math.random()*500));
+                client.subtractMoney(1L, ++transferSum);// (long)(Math.random()*500));
             try{
                 Thread.sleep(200);
             } catch (InterruptedException e) {

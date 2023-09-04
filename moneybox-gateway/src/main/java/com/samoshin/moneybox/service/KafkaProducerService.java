@@ -22,7 +22,7 @@ public class KafkaProducerService {
 
     public MoneyTransferDto sendTransfer(MoneyTransferDto transfer) {
         try {
-            kafkaTransferTemplate.send(transferTopicName, transfer);
+            kafkaTransferTemplate.send(transferTopicName,"transfer", transfer);
         } catch(Exception e) {
             log.error("Money transfer error: " + e.toString());
         }

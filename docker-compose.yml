@@ -2,72 +2,46 @@
 version: '3'
 services:
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+  moneybox-db:
+    image: postgres:alpine3.18
+    container_name: moneybox-db
     ports:
-      - 22181:2181
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=moneybox
+      - POSTGRES_USER=moneybox
+      - POSTGRES_PASSWORD=password
+      
+  moneybox-gateway:
+    build: ./moneybox-gateway
+    image: moneybox-gateway-image
+    container_name: moneybox-gateway-container
+    ports:
+      - "8080:8080"
 
-  kafka1:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka1
+  moneybox-sever:
+    build: ./moneybox-server
+    image: moneybox-sever-image
+    container_name: moneybox-sever-container
+    ports:
+      - "8085:8085"
     depends_on:
-      - zookeeper
-    ports:
-      - 29092:29092
+      - moneybox-db
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-#      KAFKA_TOPICS: "moneybox_topic:3:9"
-#      KAFKA_MIN_INSYNC_REPLICAS: 1
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://moneybox-db:5432/moneybox
+      - POSTGRES_USER=moneybox
+      - POSTGRES_PASSWORD=password
 
-  kafka2:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka2
-    depends_on:
-      - zookeeper
+  moneybox-console-logger:
+    build: ./transfer-console-logger
+    image: moneybox-console-logger-image
+    container_name: moneybox-console-logger-container
     ports:
-      - 29093:29093
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-#      KAFKA_MIN_INSYNC_REPLICAS: 1
+      - "8082:8082"
 
-  kafka3:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka3
-    depends_on:
-      - zookeeper
+  moneybox-auto-transfer:
+    build: ./auto-transfer-client
+    image: moneybox-auto-transfer-image
+    container_name: moneybox-auto-transfer-container
     ports:
-      - 29094:29094
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:29094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-#      KAFKA_MIN_INSYNC_REPLICAS: 1
-
-#
-  kafka-manager:
-    image: sheepkiller/kafka-manager:latest
-    ports:
-      - "9000:9000"
-    environment:
-      ZK_HOSTS: "zookeeper:2181"
-    depends_on:
-      - zookeeper
-    
-
+      - "8081:8081"
