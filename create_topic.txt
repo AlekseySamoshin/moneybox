@@ -1,0 +1,2 @@
+#создать топик
+kafka-topics --create --topic moneybox_topic --partitions 10 --replication-factor 3 --bootstrap-server localhost:29092

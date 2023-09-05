@@ -11,17 +11,19 @@ services:
       - POSTGRES_DB=moneybox
       - POSTGRES_USER=moneybox
       - POSTGRES_PASSWORD=password
-      
+
   moneybox-gateway:
     build: ./moneybox-gateway
     image: moneybox-gateway-image
     container_name: moneybox-gateway-container
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=192.168.0.173:29092,192.168.0.173:29093,192.168.0.173:29094
 
-  moneybox-sever:
+  moneybox-server:
     build: ./moneybox-server
-    image: moneybox-sever-image
+    image: moneybox-server-image
     container_name: moneybox-sever-container
     ports:
       - "8085:8085"
@@ -31,6 +33,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://moneybox-db:5432/moneybox
       - POSTGRES_USER=moneybox
       - POSTGRES_PASSWORD=password
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=192.168.0.173:29092,192.168.0.173:29093,192.168.0.173:29094
 
   moneybox-console-logger:
     build: ./transfer-console-logger
@@ -38,6 +41,8 @@ services:
     container_name: moneybox-console-logger-container
     ports:
       - "8082:8082"
+    environment:
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=192.168.0.173:29092,192.168.0.173:29093,192.168.0.173:29094
 
   moneybox-auto-transfer:
     build: ./auto-transfer-client
