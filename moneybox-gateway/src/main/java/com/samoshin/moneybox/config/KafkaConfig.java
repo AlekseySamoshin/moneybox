@@ -18,6 +18,9 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class KafkaConfig {
+
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String servers;
     @Value("${transfer-topic-name}")
     private String topicName;
 
@@ -29,7 +32,7 @@ public class KafkaConfig {
     @Bean
     public ProducerFactory<String, MoneyTransferDto> transferProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092,localhost:29093,localhost:29094");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         configProps.put(ProducerConfig.CLIENT_ID_CONFIG, "transferProducer");
@@ -41,7 +44,7 @@ public class KafkaConfig {
     @Bean
     public ProducerFactory<String, String> infoProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092,localhost:29093,localhost:29094");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.CLIENT_ID_CONFIG, "infoProducer");
@@ -52,8 +55,15 @@ public class KafkaConfig {
 
     @Bean
     public NewTopic topic() {
-
         return TopicBuilder.name(topicName)
+                .partitions(10)
+                .replicas(3)
+                .build();
+    }
+
+    @Bean
+    public NewTopic infoTopic() {
+        return TopicBuilder.name("info_topic")
                 .partitions(10)
                 .replicas(3)
                 .build();

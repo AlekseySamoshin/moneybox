@@ -24,7 +24,7 @@ services:
   moneybox-server:
     build: ./moneybox-server
     image: moneybox-server-image
-    container_name: moneybox-sever-container
+    container_name: moneybox-server-container
     ports:
       - "8085:8085"
     depends_on:
@@ -47,6 +47,7 @@ services:
   moneybox-auto-transfer:
     build: ./auto-transfer-client
     image: moneybox-auto-transfer-image
+#    network_mode: host
     container_name: moneybox-auto-transfer-container
-    ports:
-      - "8081:8081"
+#    ports:
+#      - "8081:8081"
