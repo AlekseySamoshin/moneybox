@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
-import org.springframework.kafka.core.*;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
@@ -23,6 +25,9 @@ public class KafkaConfig {
     private String servers;
     @Value("${transfer-topic-name}")
     private String topicName;
+
+    @Value("${info-topic-name}")
+    private String infoTopicName;
 
     @Bean
     public MoneyTransferDto moneyTransferDto() {
@@ -63,7 +68,7 @@ public class KafkaConfig {
 
     @Bean
     public NewTopic infoTopic() {
-        return TopicBuilder.name("info_topic")
+        return TopicBuilder.name(infoTopicName)
                 .partitions(10)
                 .replicas(3)
                 .build();

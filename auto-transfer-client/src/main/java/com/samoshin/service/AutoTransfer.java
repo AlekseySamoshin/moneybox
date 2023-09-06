@@ -37,7 +37,7 @@ public class AutoTransfer implements Runnable {
 
     public void checkConsistency() {
         long transfersSum = 0L;
-        MoneyboxDto moneybox = client.getInfo(1L);
+        MoneyboxDto moneybox = client.getInfoRequest(1L);
         for (MoneyTransferDto transfer : moneybox.getTransfers()) {
             transfersSum = transfer.isIncrease() ? transfersSum + transfer.getSum() : transfersSum - transfer.getSum();
         }
