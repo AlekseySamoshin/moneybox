@@ -22,6 +22,12 @@ import java.util.Map;
 @Configuration
 public class KafkaConfig {
 
+    @Value("${transfer-topic-name}")
+    private String topicName;
+
+    @Value("${info-topic-name}")
+    private String infoTopicName;
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String servers;
     @Bean
@@ -54,5 +60,21 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
+    }
+
+    @Bean
+    public NewTopic topic() {
+        return TopicBuilder.name(topicName)
+                .partitions(10)
+                .replicas(3)
+                .build();
+    }
+
+    @Bean
+    public NewTopic infoTopic() {
+        return TopicBuilder.name(infoTopicName)
+                .partitions(10)
+                .replicas(3)
+                .build();
     }
 }

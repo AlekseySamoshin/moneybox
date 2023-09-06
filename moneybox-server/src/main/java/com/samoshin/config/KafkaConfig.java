@@ -1,12 +1,14 @@
 package com.samoshin.config;
 
 import com.samoshin.dto.MoneyTransferDto;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
@@ -17,6 +19,12 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfig {
+
+    @Value("${transfer-topic-name}")
+    private String topicName;
+
+    @Value("${info-topic-name}")
+    private String infoTopicName;
 
     @Bean
     public MoneyTransferDto moneyTransferDto() {
@@ -51,5 +59,21 @@ public class KafkaConfig {
         factory.setConsumerFactory(consumerFactory());
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
+    }
+
+    @Bean
+    public NewTopic topic() {
+        return TopicBuilder.name(topicName)
+                .partitions(10)
+                .replicas(3)
+                .build();
+    }
+
+    @Bean
+    public NewTopic infoTopic() {
+        return TopicBuilder.name(infoTopicName)
+                .partitions(10)
+                .replicas(3)
+                .build();
     }
 }

@@ -32,7 +32,7 @@ public class AutoTransfer implements Runnable {
                 System.out.println("The Matrix has you");
             }
         }
-        checkConsistency();
+//        checkConsistency();
     }
 
     public void checkConsistency() {
