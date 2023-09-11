@@ -1,30 +1,33 @@
 package com.samoshin.moneybox.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.samoshin.dto.MoneyTransferDto;
+import com.samoshin.dto.MoneyboxDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@EmbeddedKafka(
+        partitions = 1,
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"}
+)
 class MoneyboxGatewayServiceTest {
-    @Autowired
-    ObjectMapper mapper;
 
     @Autowired
-    private MockMvc mockMvc;
-
+    MoneyboxGatewayService moneyboxGatewayService;
 
     @Test
     void sendTransfer() {
-
+        MoneyTransferDto moneyTransferDto = moneyboxGatewayService.sendTransfer(1L, 999L, true);
+        assertEquals(999L, moneyTransferDto.getSum());
     }
 
     @Test
     void getInfo() {
+        String result = moneyboxGatewayService.getInfo(1L);
+        assertEquals("Request to get info was sended for moneyboxId=1", result);
     }
 }

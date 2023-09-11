@@ -1,33 +1,38 @@
 package com.samoshin.moneybox.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import com.samoshin.moneybox.service.KafkaProducerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@EmbeddedKafka(
+        partitions = 1,
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29093", "port=9092"}
+)
 class MoneyboxControllerTest {
     @Autowired
     ObjectMapper mapper;
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private KafkaProducerService kafkaProducerService;
 
     private String wrongAddUrl;
     private String correctAddUrl;
@@ -37,38 +42,67 @@ class MoneyboxControllerTest {
 
     @BeforeEach
     void setup() {
-        wrongAddUrl = "/id_not_a_long/add/sum_not_a_long";
-        correctAddUrl = "/1/add/100";
-        wrongSubtractUrl = "/id_not_a_long/subtract/sum_not_a_long";
-        correctSubtractUrl = "/id_not_a_long/subtract/sum_not_a_long";
-        getInfoCorrectUrl = "/1";
+        wrongAddUrl = "http://localhost:8080/moneybox/id_not_a_long/add/sum_not_a_long";
+        correctAddUrl = "http://localhost:8080/moneybox/1/add/1000";
+        wrongSubtractUrl = "http://localhost:8080/moneybox/id_not_a_long/subtract/sum_not_a_long";
+        correctSubtractUrl = "http://localhost:8080/moneybox/1/subtract/1000";
+        getInfoCorrectUrl = "http://localhost:8080/moneybox/1";
     }
 
-
-    @SneakyThrows
     @Test
-    void addMoneyCorrect() {
+    void sendTransferAddMoneyCorrectRequest() throws Exception {
         mockMvc.perform(post(correctAddUrl)
-//                        .header("X-Sharer-User-Id", 1)
-//                        .content(mapper.writeValueAsString(bookingDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                )
+                        .characterEncoding(StandardCharsets.UTF_8))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.sum", is(100), Long.class));
+                .andExpect(status().isOk());
     }
 
     @Test
-    void addMoneyWrongRequest() {
+    void sendTransferSubtractMoneyCorrectRequest() throws Exception {
+        mockMvc.perform(post(correctSubtractUrl)
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void subtractMoneyWrongRequest() {
+    void getInfoCorrectRequest() throws Exception {
+        mockMvc.perform(get(getInfoCorrectUrl)
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
-    void getInfo() {
+    void sendTransferWrongRequest() throws Exception {
+        mockMvc.perform(post("http://localhost:8080/moneybox/1/1000")
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void sendTransferAddMoneyWrongPathVariableRequest() throws Exception {
+        mockMvc.perform(post(wrongAddUrl)
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void sendTransferSubtractMoneyWrongPathVariableRequest() throws Exception {
+        mockMvc.perform(post(wrongSubtractUrl)
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getInfoWrongRequest() throws Exception {
+        mockMvc.perform(get("http://localhost:8080/moneybox/not_a_long")
+                        .characterEncoding(StandardCharsets.UTF_8))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
     }
 }
