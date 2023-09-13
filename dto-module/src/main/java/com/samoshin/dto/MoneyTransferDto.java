@@ -16,9 +16,9 @@ public class MoneyTransferDto {
     public String toString() {
         return "MoneyTransfer[" +
                 "id=" + id +
-                "moneyboxId=" + moneyboxId +
-                "sum=" + sum +
-                "increase=" + increase +
+                ";moneyboxId=" + moneyboxId +
+                ";sum=" + sum +
+                ";increase=" + increase +
                 "]";
     }
 }

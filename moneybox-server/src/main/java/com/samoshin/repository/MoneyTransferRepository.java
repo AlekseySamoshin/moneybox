@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface MoneyTransferRepository extends JpaRepository<MoneyTransfer, Long> {
     @Override
-    @Query(value = "SELECT * FROM money_transfers WHERE id = ? FOR NO KEY UPDATE", nativeQuery = true)
+    @Query(value = "SELECT * FROM money_transfers WHERE id = ? FOR UPDATE", nativeQuery = true)
     Optional<MoneyTransfer> findById(Long id);
 }

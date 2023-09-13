@@ -29,14 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 )
 class KafkaProducerServiceTest {
 
-    @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
+//    @Autowired
+//    private EmbeddedKafkaBroker embeddedKafkaBroker;
 
-    @Autowired
-    private KafkaTemplate<String, String> infoKafkaTemplate;
-
-    @Autowired
-    private KafkaTemplate<String, MoneyTransferDto> kafkaTemplate;
+//    @Autowired
+//    private KafkaTemplate<String, String> infoKafkaTemplate;
+//
+//    @Autowired
+//    private KafkaTemplate<String, MoneyTransferDto> kafkaTemplate;
 
     @Autowired
     KafkaProducerService kafkaProducerService;
