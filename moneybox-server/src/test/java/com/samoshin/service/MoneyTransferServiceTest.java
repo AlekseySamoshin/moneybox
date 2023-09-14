@@ -12,7 +12,9 @@ import com.samoshin.repository.MoneyboxRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,23 +26,21 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @EmbeddedKafka(
         partitions = 1,
         brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"},
-        topics = {"moneybox_topic","info_topic"}
+        topics = {"moneybox_topic", "info_topic"}
 )
 class MoneyTransferServiceTest {
-    @Autowired
-    private TransactionInterceptor transactionInterceptor;
 
     @InjectMocks
     private MoneyTransferService moneyTransferService;
 
-    @Mock
+    @MockBean
     private EntityManager entityManager;
 
     @Mock
@@ -55,9 +55,6 @@ class MoneyTransferServiceTest {
     @Mock
     private MoneyboxDtoMapper moneyboxDtoMapper;
 
-    @Captor
-    private ArgumentCaptor<MoneyTransferDto> captor;
-
     private Moneybox moneybox = new Moneybox();
     private MoneyTransfer moneyTransfer = new MoneyTransfer();
     private MoneyboxDto moneyboxDto;
@@ -65,16 +62,15 @@ class MoneyTransferServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.moneybox.setId(1L);
-        this.moneybox.setSum(99L);
-        this.moneyTransfer.setId(1L);
-        this.moneyTransfer.setMoneyboxId(1L);
-        this.moneyTransfer.setSum(99L);
-        this.moneyTransfer.setIncrease(true);
-        this.moneybox.setTransfers(List.of(moneyTransfer));
-        this.moneyboxDto = moneyboxDtoMapper.mapToDto(moneybox);
-        this.moneyTransferDto = moneyTransferDtoMapper.mapToDto(moneyTransfer);
-        ReflectionTestUtils.setField(moneyTransferService, "entityManager", entityManager);
+        moneybox.setId(1L);
+        moneybox.setSum(99L);
+        moneyTransfer.setId(1L);
+        moneyTransfer.setMoneyboxId(1L);
+        moneyTransfer.setSum(99L);
+        moneyTransfer.setIncrease(true);
+        moneybox.setTransfers(List.of(moneyTransfer));
+        moneyboxDto = moneyboxDtoMapper.mapToDto(moneybox);
+        moneyTransferDto = moneyTransferDtoMapper.mapToDto(moneyTransfer);
     }
 
     @Test
@@ -92,22 +88,33 @@ class MoneyTransferServiceTest {
 
     @Test
     void makeTransactionWithRollbackAfterException() {
-        when(moneyboxRepository.findById(1L)).thenReturn(Optional.of(moneybox));
+        when(moneyboxRepository.findById(any())).thenReturn(Optional.of(moneybox));
         when(moneyboxRepository.save(any())).thenReturn(moneybox);
         when(moneyTransferRepository.findById(any())).thenReturn(Optional.of(moneyTransfer));
         when(moneyTransferRepository.save(any())).thenReturn(moneyTransfer);
         when(moneyTransferDtoMapper.mapToDto(any())).then(Mockito.CALLS_REAL_METHODS);
-        when(moneyTransferRepository.save(any())).thenThrow(new NotFoundException("error example"));
+        when(moneyTransferRepository.save(any())).thenThrow(new NullPointerException("error example"));
         setUp();
         Exception exception = assertThrows(
-                NotFoundException.class,
+                NullPointerException.class,
                 () -> moneyTransferService.makeTransaction(moneyTransferDto));
-//        Mockito.verify(entityManager, Mockito.times(1)).getTransaction();
-//        Mockito.verify(entityManager.getTransaction(), Mockito.times(1)).rollback();
         assertEquals("error example", exception.getMessage());
+        Mockito.verify(entityManager, Mockito.times(1)).getTransaction();
+//        Mockito.verify(entityManager.getTransaction(), Mockito.times(1)).rollback();
     }
 
     @Test
     void getInfo() {
+        when(moneyboxRepository.findById(anyLong())).thenReturn(Optional.of(moneybox));
+        MoneyboxDto receivedMoneyboxDto = moneyTransferService.getInfo("1");
+        assertEquals(1L, receivedMoneyboxDto.getId());
+    }
+
+    @Test
+    void getInfoWrongIdType() {
+        Exception exception = assertThrows(
+                NumberFormatException.class,
+                () -> moneyTransferService.getInfo("not_a_long_id"));
+        assertEquals(true, exception.getMessage().contains("not_a_long_id"));
     }
 }
