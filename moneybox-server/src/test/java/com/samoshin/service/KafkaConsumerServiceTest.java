@@ -9,9 +9,11 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
@@ -39,17 +41,18 @@ import static org.junit.jupiter.api.Assertions.*;
         topics = {"moneybox_topic","info_topic"}
 )
 class KafkaConsumerServiceTest {
-    @Autowired
-    private KafkaListenerEndpointRegistry endpointRegistry;
 
-    @Autowired
-    KafkaTemplate<String, String> infoKafkaTemplate;
-
-    @Autowired
+    @InjectMocks
     KafkaConsumerService kafkaConsumerService;
 
-    @Autowired
+    @MockBean
+    private KafkaListenerEndpointRegistry endpointRegistry;
+
+    @MockBean
     Acknowledgment acknowledgment;
+
+    @MockBean
+    KafkaTemplate<String, String> infoKafkaTemplate;
 
     private MoneyTransferDto moneyTransferDto;
     private MoneyboxDto moneyboxDto;
@@ -88,9 +91,5 @@ class KafkaConsumerServiceTest {
         MoneyTransferDto testingDto = kafkaConsumerService.executeTransfer(receivedDto, acknowledgment);
         assertNotNull(testingDto);
 //        kafkaConsumerService.executeTransfer()
-    }
-
-    @Test
-    void getMoneyboxInfo() {
     }
 }

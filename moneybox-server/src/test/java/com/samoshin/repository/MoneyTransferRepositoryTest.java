@@ -27,11 +27,11 @@ class MoneyTransferRepositoryTest {
         moneyboxRepository.save(moneybox);
         moneyTransferRepository.save(moneyTransfer);
 
-        Optional<MoneyTransfer> readedMoneyTransfer = moneyTransferRepository.findById(1L);
+        Optional<MoneyTransfer> readedMoneyTransfer = moneyTransferRepository.findByIdForUpdate(1L);
         assertEquals(true,  readedMoneyTransfer.isPresent());
         assertEquals(999L, readedMoneyTransfer.get().getSum());
 
-        Optional<MoneyTransfer> readedNonExistentMoneyTransfer = moneyTransferRepository.findById(2L);
+        Optional<MoneyTransfer> readedNonExistentMoneyTransfer = moneyTransferRepository.findByIdForUpdate(2L);
         assertEquals(true, readedNonExistentMoneyTransfer.isEmpty());
     }
 }

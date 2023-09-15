@@ -2,6 +2,7 @@ package com.samoshin.service;
 
 import com.samoshin.dto.MoneyTransferDto;
 import com.samoshin.dto.MoneyboxDto;
+import com.samoshin.exception.NotFoundException;
 import com.samoshin.mapper.MoneyTransferDtoMapper;
 import com.samoshin.mapper.MoneyboxDtoMapper;
 import com.samoshin.model.MoneyTransfer;
@@ -10,17 +11,19 @@ import com.samoshin.repository.MoneyTransferRepository;
 import com.samoshin.repository.MoneyboxRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ComponentScan("../*")
 @EmbeddedKafka(
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"},
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29096", "port=9092"},
         topics = {"moneybox_topic", "info_topic"}
 )
 @DataJpaTest
@@ -29,26 +32,28 @@ public class MoneyTransferServiceWithDataJpaTest {
     @Autowired
     MoneyTransferService moneyTransferService;
 
-    @Mock
+    @Autowired
     MoneyboxRepository moneyboxRepository;
 
-    @Mock
+    @Autowired
     MoneyTransferRepository moneyTransferRepository;
 
-    @Mock
+    @Autowired
     MoneyboxDtoMapper moneyboxDtoMapper;
 
-    @Mock
+    @Autowired
     MoneyTransferDtoMapper moneyTransferDtoMapper;
 
-    private Moneybox moneybox = new Moneybox();
-    private MoneyTransfer moneyTransfer = new MoneyTransfer();
-    private MoneyboxDto moneyboxDto = new MoneyboxDto();
-    private MoneyTransferDto moneyTransferDto = new MoneyTransferDto();
+    Moneybox moneybox = new Moneybox();
+    MoneyTransfer moneyTransfer = new MoneyTransfer();
+    MoneyboxDto moneyboxDto;
+    MoneyTransferDto moneyTransferDto;
 
     @BeforeEach
     void setUp() {
+        moneybox.setId(1L);
         moneybox.setSum(99L);
+        moneyTransfer.setId(1L);
         moneyTransfer.setMoneyboxId(1L);
         moneyTransfer.setSum(99L);
         moneyTransfer.setIncrease(true);
@@ -56,21 +61,37 @@ public class MoneyTransferServiceWithDataJpaTest {
         moneyTransferDto = moneyTransferDtoMapper.mapToDto(moneyTransfer);
     }
 
+
     @Test
     void makeTransactionWithRollbackAfterException() throws InterruptedException {
+        setUp();
         moneyboxRepository.save(moneybox);
         moneyTransferRepository.save(moneyTransfer);
+        Moneybox moneybox1 = moneyboxRepository.findById(1L).get();
         assertEquals(99L, moneyboxRepository.findById(1L).get().getSum());
         assertEquals(99L, moneyTransferRepository.findAll().stream()
                 .mapToLong(MoneyTransfer::getSum)
                 .sum());
 
-
+        //ошибка в транзакции
         moneyTransferService.makeTransaction(moneyTransferDtoMapper.mapToDto(
                 new MoneyTransfer(null, 1L, true, 100L)));
         assertEquals(199L, moneyboxRepository.findById(1L).get().getSum());
         assertEquals(199L, moneyTransferRepository.findAll().stream()
                 .mapToLong(MoneyTransfer::getSum)
                 .sum());
+
+        //проверка того, что данные не изменились
+        Exception exception = assertThrows(
+                NotFoundException.class,
+                () -> moneyTransferService.makeTransaction(moneyTransferDtoMapper.mapToDto(
+                        new MoneyTransfer(1L, 2L, true, 100L))));
+
+        //проверка того, что данные не поменялись
+        assertEquals(199L, moneyboxRepository.findById(1L).get().getSum());
+        assertEquals(199L, moneyTransferRepository.findAll().stream()
+                .mapToLong(MoneyTransfer::getSum)
+                .sum());
+
     }
 }

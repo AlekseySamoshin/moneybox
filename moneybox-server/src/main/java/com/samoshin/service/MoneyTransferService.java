@@ -40,7 +40,7 @@ public class MoneyTransferService {
     }
 
     private Moneybox getMoneyboxById(Long moneyboxId) {
-        return moneyboxRepository.findById(moneyboxId).orElseThrow(
+        return moneyboxRepository.findByIdForUpdate(moneyboxId).orElseThrow(
                 () -> new NotFoundException("moneybox id=" + moneyboxId + " not found")
         );
     }

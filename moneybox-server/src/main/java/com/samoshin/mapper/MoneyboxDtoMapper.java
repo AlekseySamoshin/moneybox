@@ -13,10 +13,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MoneyboxDtoMapper {
     private final MoneyTransferDtoMapper transferDtoMapper;
+    List<MoneyTransferDto> transferDtos;
     public MoneyboxDto mapToDto(Moneybox moneybox) {
-        List<MoneyTransferDto> transferDtos = moneybox.getTransfers().stream()
-                .map((transfer) -> transferDtoMapper.mapToDto(transfer))
-                .collect(Collectors.toList());
+        if(null != moneybox.getTransfers()) {
+            transferDtos = moneybox.getTransfers().stream()
+                    .map((transfer) -> transferDtoMapper.mapToDto(transfer))
+                    .collect(Collectors.toList());
+        }
         return new MoneyboxDto(moneybox.getId(), moneybox.getSum(), transferDtos);
 
     }
