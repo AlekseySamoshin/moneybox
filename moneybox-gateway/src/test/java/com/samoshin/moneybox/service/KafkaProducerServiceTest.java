@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
@@ -23,27 +24,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
+//@EnableKafka
 @EmbeddedKafka(
+        topics = {"moneybox_topic", "info_topic"},
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"}
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29094", "port=9092"}
 )
 class KafkaProducerServiceTest {
-
-//    @Autowired
-//    private EmbeddedKafkaBroker embeddedKafkaBroker;
-
-//    @Autowired
-//    private KafkaTemplate<String, String> infoKafkaTemplate;
-//
-//    @Autowired
-//    private KafkaTemplate<String, MoneyTransferDto> kafkaTemplate;
 
     @Autowired
     KafkaProducerService kafkaProducerService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private MoneyTransferDto moneyTransferDto;
     private MoneyboxDto moneyboxDto;
-    private ObjectMapper objectMapper;
     private static BlockingQueue<ConsumerRecord<String, String>> records = new LinkedBlockingDeque<>();
 
     @KafkaListener(
