@@ -5,12 +5,15 @@ import com.samoshin.model.Moneybox;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@DirtiesContext
 class MoneyTransferRepositoryTest {
 
     @Autowired
@@ -20,10 +23,12 @@ class MoneyTransferRepositoryTest {
     MoneyTransferRepository moneyTransferRepository;
 
     @Test
+    @Sql(scripts = "classpath:schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void saveAndFindById() {
         Moneybox moneybox = new Moneybox();
+        moneybox.setId(1L);
         moneybox.setSum(999L);
-        MoneyTransfer moneyTransfer = new MoneyTransfer(null, 1L, true, 999L);
+        MoneyTransfer moneyTransfer = new MoneyTransfer(1L, 1L, true, 999L);
         moneyboxRepository.save(moneybox);
         moneyTransferRepository.save(moneyTransfer);
 

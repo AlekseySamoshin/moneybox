@@ -32,7 +32,7 @@ public class KafkaProducerService {
 
     public String getInfo(Long moneyboxId) {
         try {
-            kafkaInfoTemplate.send(infoTopicName, moneyboxId.toString());
+            kafkaInfoTemplate.send(infoTopicName, "info", moneyboxId.toString());
         } catch(Exception e) {
             log.error("Get info error: " + e.toString());
         }

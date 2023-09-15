@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-//@EnableKafka
 @EmbeddedKafka(
         topics = {"moneybox_topic", "info_topic"},
         partitions = 1,
@@ -52,7 +51,7 @@ class KafkaProducerServiceTest {
 
     @KafkaListener(
             topics = "info_topic",
-            groupId = "test_group",
+            groupId = "test_info_group",
             concurrency = "1")
     public void listenInfo(ConsumerRecord<String, String> record) {
         records.add(record);
