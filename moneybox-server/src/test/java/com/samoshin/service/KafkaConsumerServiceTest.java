@@ -22,6 +22,7 @@ import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@TestPropertySource(locations = "classpath:application-test.properties")
 @EmbeddedKafka(
         partitions = 1,
         brokerProperties = {"listeners=PLAINTEXT://localhost:29094", "port=9095"},

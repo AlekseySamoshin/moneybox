@@ -4,32 +4,35 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samoshin.dto.MoneyTransferDto;
 import com.samoshin.dto.MoneyboxDto;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.Rule;
+import com.samoshin.moneybox.controller.MoneyboxController;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @EmbeddedKafka(
-        topics = {"moneybox_topic", "info_topic"},
+        topics = {"moneybox_topic"},
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29094", "port=9092"},
-        controlledShutdown = true
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29098","port=9092"}
+//        controlledShutdown = true
 )
-
+@TestPropertySource(properties = {"spring.kafka.bootstrap-servers=localhost:29098"})
+@DirtiesContext
 class KafkaProducerServiceTest {
 
 //    @Rule
@@ -41,29 +44,36 @@ class KafkaProducerServiceTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    MoneyboxController moneyboxController;
+
     private MoneyTransferDto moneyTransferDto;
+
+
     private MoneyboxDto moneyboxDto;
-    private static BlockingQueue<ConsumerRecord<String, String>> records = new LinkedBlockingDeque<>();
 
-    @KafkaListener(
-            topics = "moneybox_topic",
-            groupId = "test_group",
-            concurrency = "1")
-    public void listen(ConsumerRecord<String, String> record) {
-        records.add(record);
-    }
+//    private static BlockingQueue<ConsumerRecord<String, String>> records = new LinkedBlockingDeque<>();
 
-    @KafkaListener(
-            topics = "info_topic",
-            groupId = "test_info_group",
-            concurrency = "1")
-    public void listenInfo(ConsumerRecord<String, String> record) {
-        records.add(record);
-    }
+//    @KafkaListener(
+//            topics = "moneybox_topic",
+//            groupId = "test_group",
+//            concurrency = "1")
+//    public void listen(ConsumerRecord<String, MoneyTransferDto> record) {
+//        records.add(record);
+//    }
+//
+//    @KafkaListener(
+//            topics = "info_topic",
+//            groupId = "test_info_group",
+//            concurrency = "1")
+//    public void listenInfo(ConsumerRecord<String, MoneyTransferDto> record) {
+//        records.add(record);
+//    }
 
     @BeforeEach
     void setup() {
         moneyTransferDto = new MoneyTransferDto(1L, 1L, true, 99L);
+//        kafkaProducerService.sendTransfer(moneyTransferDto);
         moneyboxDto = new MoneyboxDto(1L, 99L, List.of(moneyTransferDto));
         objectMapper = new ObjectMapper();
     }
@@ -71,17 +81,47 @@ class KafkaProducerServiceTest {
     @Test
     void sendTransferMessage() throws InterruptedException, JsonProcessingException {
         kafkaProducerService.sendTransfer(moneyTransferDto);
-        ConsumerRecord<String, String> received = records.poll(1, TimeUnit.SECONDS);
-        assertNotNull(received);
-        MoneyTransferDto receivedDto = objectMapper.readValue(received.value(), MoneyTransferDto.class);
+        Thread.sleep(5000);
+        Consumer<String, MoneyTransferDto> consumer = createTransferConsumer();
+        consumer.subscribe(Collections.singletonList("moneybox_topic"));
+        ConsumerRecords<String, MoneyTransferDto> records = consumer.poll(Duration.ofSeconds(5));
+        assertNotNull(records);
+        MoneyTransferDto receivedDto = records.records("moneybox_topic").iterator().next().value();
         assertEquals(99L, receivedDto.getSum());
     }
 
     @Test
     void sendGetInfoMessage() throws InterruptedException, JsonProcessingException {
         kafkaProducerService.getInfo(1L);
-        ConsumerRecord<String, String> received = records.poll(1, TimeUnit.SECONDS);
-        assertNotNull(received);
-        assertEquals("1", received.value());
+        Thread.sleep(5000);
+        Consumer<String, String> consumer = createInfoConsumer();
+        consumer.subscribe(Collections.singletonList("info_topic"));
+        ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(5));
+        assertNotNull(records);
+        String receivedDto = records.records("info_topic").iterator().next().value();
+        assertEquals("1", receivedDto);
+    }
+
+
+    private Consumer<String, MoneyTransferDto> createTransferConsumer() {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29098");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "moneybox-test-group");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class.getName());
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, MoneyTransferDto.class);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        return new KafkaConsumer<>(props);
+    }
+
+    private Consumer<String, String> createInfoConsumer() {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29098");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "info-test-group");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, MoneyTransferDto.class);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        return new KafkaConsumer<>(props);
     }
 }
