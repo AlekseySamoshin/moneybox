@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samoshin.dto.MoneyTransferDto;
 import com.samoshin.dto.MoneyboxDto;
 import com.samoshin.moneybox.controller.MoneyboxController;
-import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,14 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         topics = {"moneybox_topic"},
         partitions = 1,
         brokerProperties = {"listeners=PLAINTEXT://localhost:29098","port=9092"}
-//        controlledShutdown = true
 )
 @TestPropertySource(properties = {"spring.kafka.bootstrap-servers=localhost:29098"})
 @DirtiesContext
 class KafkaProducerServiceTest {
-
-//    @Rule
-//    EmbeddedKafkaRule embeddedKafkaRule = new EmbeddedKafkaRule(1, true);
 
     @Autowired
     KafkaProducerService kafkaProducerService;
@@ -49,31 +48,11 @@ class KafkaProducerServiceTest {
 
     private MoneyTransferDto moneyTransferDto;
 
-
     private MoneyboxDto moneyboxDto;
-
-//    private static BlockingQueue<ConsumerRecord<String, String>> records = new LinkedBlockingDeque<>();
-
-//    @KafkaListener(
-//            topics = "moneybox_topic",
-//            groupId = "test_group",
-//            concurrency = "1")
-//    public void listen(ConsumerRecord<String, MoneyTransferDto> record) {
-//        records.add(record);
-//    }
-//
-//    @KafkaListener(
-//            topics = "info_topic",
-//            groupId = "test_info_group",
-//            concurrency = "1")
-//    public void listenInfo(ConsumerRecord<String, MoneyTransferDto> record) {
-//        records.add(record);
-//    }
 
     @BeforeEach
     void setup() {
         moneyTransferDto = new MoneyTransferDto(1L, 1L, true, 99L);
-//        kafkaProducerService.sendTransfer(moneyTransferDto);
         moneyboxDto = new MoneyboxDto(1L, 99L, List.of(moneyTransferDto));
         objectMapper = new ObjectMapper();
     }

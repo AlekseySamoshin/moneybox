@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samoshin.moneybox.service.KafkaProducerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -16,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.nio.charset.StandardCharsets;
 
@@ -26,33 +23,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@Testcontainers
+//@Testcontainers
 @AutoConfigureMockMvc
-//@EmbeddedKafka(
-//        partitions = 1,
-//        brokerProperties = {"listeners=PLAINTEXT://localhost:29093", "port=9092"}
-//)
+@EmbeddedKafka(
+        partitions = 1,
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29093", "port=9092"}
+)
 class MoneyboxControllerTest {
+
+//--------Раскомментировать для использования TestContainers------------
+//    static Network network = Network.newNetwork();
+//
+//    @Container
+//    static final KafkaContainer kafkaContainer1 = new KafkaContainer()
+//            .withNetwork(network);
+//
+//    @DynamicPropertySource
+//    public static void registerKafkaProperties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.kafka.bootstrap-servers", () ->
+//                kafkaContainer1.getBootstrapServers());
+//    }
+
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
     @Autowired
     ObjectMapper mapper;
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private KafkaProducerService kafkaProducerService;
-
-    static Network network = Network.newNetwork();
-
-    @Container
-    static final KafkaContainer kafkaContainer1 = new KafkaContainer()
-            .withNetwork(network);
-
-    @DynamicPropertySource
-    public static void registerKafkaProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", () ->
-                kafkaContainer1.getBootstrapServers());
-    }
 
     private String wrongAddUrl;
     private String correctAddUrl;

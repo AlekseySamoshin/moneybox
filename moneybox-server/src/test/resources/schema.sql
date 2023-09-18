@@ -12,6 +12,3 @@ CREATE TABLE IF NOT EXISTS money_transfers (
 	moneybox_id BIGINT NOT NULL REFERENCES moneyboxes(id),
 	sum BIGINT NOT NULL
 );
-
---INSERT INTO moneyboxes (id, sum) VALUES
---	 (1, 0);

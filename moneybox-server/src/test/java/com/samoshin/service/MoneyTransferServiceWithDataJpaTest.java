@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @EmbeddedKafka(
         partitions = 1,
         brokerProperties = {"listeners=PLAINTEXT://localhost:29096", "port=9093"}
-//        topics = {"moneybox_topic", "info_topic"}
 )
 @DataJpaTest
 @DirtiesContext

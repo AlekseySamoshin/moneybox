@@ -1,12 +1,10 @@
 package com.samoshin.moneybox.service;
 
 import com.samoshin.dto.MoneyTransferDto;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,9 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         controlledShutdown = true
 )
 class MoneyboxGatewayServiceTest {
-
-//    @Rule
-//    EmbeddedKafkaRule embeddedKafkaRule = new EmbeddedKafkaRule(1, true);
 
     @Autowired
     MoneyboxGatewayService moneyboxGatewayService;
