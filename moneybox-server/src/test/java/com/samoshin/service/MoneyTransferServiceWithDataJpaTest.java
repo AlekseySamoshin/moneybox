@@ -17,14 +17,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ComponentScan("../*")
 @EmbeddedKafka(
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29096", "port=9092"},
-        topics = {"moneybox_topic", "info_topic"}
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29096", "port=9093"}
+//        topics = {"moneybox_topic", "info_topic"}
 )
 @DataJpaTest
 @DirtiesContext
@@ -73,7 +75,6 @@ public class MoneyTransferServiceWithDataJpaTest {
                 .mapToLong(MoneyTransfer::getSum)
                 .sum());
 
-        //ошибка в транзакции
         moneyTransferService.makeTransaction(moneyTransferDtoMapper.mapToDto(
                 new MoneyTransfer(null, 1L, true, 100L)));
         assertEquals(199L, moneyboxRepository.findById(1L).get().getSum());
@@ -81,7 +82,7 @@ public class MoneyTransferServiceWithDataJpaTest {
                 .mapToLong(MoneyTransfer::getSum)
                 .sum());
 
-        //проверка того, что данные не изменились
+        //ошибочная транзакция
         Exception exception = assertThrows(
                 NotFoundException.class,
                 () -> moneyTransferService.makeTransaction(moneyTransferDtoMapper.mapToDto(
@@ -93,5 +94,8 @@ public class MoneyTransferServiceWithDataJpaTest {
                 .mapToLong(MoneyTransfer::getSum)
                 .sum());
 
+        //проверка того, что никакие ошибочные данные не добавились
+        List<MoneyTransfer> allTransfers = moneyTransferRepository.findAll();
+        assertEquals(0, allTransfers.stream().filter((moneyTransfer) -> moneyTransfer.getMoneyboxId().equals(2L)).count());
     }
 }

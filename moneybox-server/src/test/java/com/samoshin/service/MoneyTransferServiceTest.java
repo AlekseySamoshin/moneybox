@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @EmbeddedKafka(
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"},
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9094"},
         topics = {"moneybox_topic", "info_topic"}
 )
 class MoneyTransferServiceTest {

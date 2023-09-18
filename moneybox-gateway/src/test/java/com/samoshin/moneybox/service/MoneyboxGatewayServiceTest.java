@@ -1,20 +1,25 @@
 package com.samoshin.moneybox.service;
 
 import com.samoshin.dto.MoneyTransferDto;
-import com.samoshin.dto.MoneyboxDto;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @EmbeddedKafka(
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"}
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"},
+        controlledShutdown = true
 )
 class MoneyboxGatewayServiceTest {
+
+//    @Rule
+//    EmbeddedKafkaRule embeddedKafkaRule = new EmbeddedKafkaRule(1, true);
 
     @Autowired
     MoneyboxGatewayService moneyboxGatewayService;

@@ -39,9 +39,17 @@ public class MoneyTransferService {
         return moneyboxDtoMapper.mapToDto(getMoneyboxById(moneyboxIdLong));
     }
 
+    public MoneyboxDto addNewMoneybox() {
+        Moneybox moneybox = new Moneybox();
+        moneybox.setSum(0L);
+        Moneybox savedMoneybox = moneyboxRepository.save(moneybox);
+        return moneyboxDtoMapper.mapToDto(savedMoneybox);
+    }
+
     private Moneybox getMoneyboxById(Long moneyboxId) {
         return moneyboxRepository.findByIdForUpdate(moneyboxId).orElseThrow(
                 () -> new NotFoundException("moneybox id=" + moneyboxId + " not found")
         );
     }
 }
+

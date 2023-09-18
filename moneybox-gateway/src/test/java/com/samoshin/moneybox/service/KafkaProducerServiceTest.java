@@ -5,15 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samoshin.dto.MoneyTransferDto;
 import com.samoshin.dto.MoneyboxDto;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.kafka.test.rule.EmbeddedKafkaRule;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -27,9 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @EmbeddedKafka(
         topics = {"moneybox_topic", "info_topic"},
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29094", "port=9092"}
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29094", "port=9092"},
+        controlledShutdown = true
 )
+
 class KafkaProducerServiceTest {
+
+//    @Rule
+//    EmbeddedKafkaRule embeddedKafkaRule = new EmbeddedKafkaRule(1, true);
 
     @Autowired
     KafkaProducerService kafkaProducerService;
