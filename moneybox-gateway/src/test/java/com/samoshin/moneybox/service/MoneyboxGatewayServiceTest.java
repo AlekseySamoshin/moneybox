@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @EmbeddedKafka(
         partitions = 1,
-        brokerProperties = {"listeners=PLAINTEXT://localhost:29092", "port=9092"},
+        brokerProperties = {"listeners=PLAINTEXT://localhost:29097", "port=9092"},
         controlledShutdown = true
 )
 class MoneyboxGatewayServiceTest {
