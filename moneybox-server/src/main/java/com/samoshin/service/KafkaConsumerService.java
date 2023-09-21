@@ -16,19 +16,19 @@ public class KafkaConsumerService {
     private final MoneyTransferService moneyTransferService;
     Integer counter = 0;
 
-    @KafkaListener(
-            topics = "${transfer-topic-name}",
-            groupId = "${kafka.group-id}",
-            concurrency = "3",
-            containerFactory = "kafkaListenerContainerFactory")
-    public MoneyTransferDto executeTransfer(@Payload MoneyTransferDto transferDto, Acknowledgment acknowledgment) {
-        log.info("Kafka Consumer Service: received message from Kafka broker: {}", transferDto);
-        transferDto = moneyTransferService.makeTransaction(transferDto);
-        log.info("Transaction to database is done. " + transferDto);
-        acknowledgment.acknowledge();
-        log.info("Acknowledge transfer to kafka broker is done.");
-        return transferDto;
-    }
+//    @KafkaListener(
+//            topics = "${transfer-topic-name}",
+//            groupId = "${kafka.group-id}",
+//            concurrency = "3",
+//            containerFactory = "kafkaListenerContainerFactory")
+//    public MoneyTransferDto executeTransfer(@Payload MoneyTransferDto transferDto, Acknowledgment acknowledgment) {
+//        log.info("Kafka Consumer Service: received message from Kafka broker: {}", transferDto);
+//        transferDto = moneyTransferService.makeTransaction(transferDto);
+//        log.info("Transaction to database is done. " + transferDto);
+//        acknowledgment.acknowledge();
+//        log.info("Acknowledge transfer to kafka broker is done.");
+//        return transferDto;
+//    }
 
     @KafkaListener(
             topics = "${info-topic-name}",
