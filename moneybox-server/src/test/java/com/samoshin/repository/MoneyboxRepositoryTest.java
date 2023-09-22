@@ -22,7 +22,7 @@ class MoneyboxRepositoryTest {
     void saveAndFindById() {
         Moneybox moneybox = new Moneybox();
         moneybox.setSum(99L);
-        MoneyTransfer moneyTransfer = new MoneyTransfer(null, 1L, true, 99L);
+        MoneyTransfer moneyTransfer = new MoneyTransfer(null, null, 1L, true, 99L);
         moneyboxRepository.save(moneybox);
         moneyTransferRepository.save(moneyTransfer);
 

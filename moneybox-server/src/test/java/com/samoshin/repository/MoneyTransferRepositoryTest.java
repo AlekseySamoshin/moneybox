@@ -28,7 +28,7 @@ class MoneyTransferRepositoryTest {
         Moneybox moneybox = new Moneybox();
         moneybox.setId(1L);
         moneybox.setSum(999L);
-        MoneyTransfer moneyTransfer = new MoneyTransfer(1L, 1L, true, 999L);
+        MoneyTransfer moneyTransfer = new MoneyTransfer(1L, null, 1L, true, 999L);
         moneyboxRepository.save(moneybox);
         moneyTransferRepository.save(moneyTransfer);
 

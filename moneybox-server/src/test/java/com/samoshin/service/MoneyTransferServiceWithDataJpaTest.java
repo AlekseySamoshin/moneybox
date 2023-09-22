@@ -75,7 +75,7 @@ public class MoneyTransferServiceWithDataJpaTest {
                 .sum());
 
         moneyTransferService.makeTransaction(moneyTransferDtoMapper.mapToDto(
-                new MoneyTransfer(null, 1L, true, 100L)));
+                new MoneyTransfer(null, null, 1L, true, 100L)));
         assertEquals(199L, moneyboxRepository.findById(1L).get().getSum());
         assertEquals(199L, moneyTransferRepository.findAll().stream()
                 .mapToLong(MoneyTransfer::getSum)
@@ -85,7 +85,7 @@ public class MoneyTransferServiceWithDataJpaTest {
         Exception exception = assertThrows(
                 NotFoundException.class,
                 () -> moneyTransferService.makeTransaction(moneyTransferDtoMapper.mapToDto(
-                        new MoneyTransfer(1L, 2L, true, 100L))));
+                        new MoneyTransfer(1L, null, 2L, true, 100L))));
 
         //проверка того, что данные не поменялись
         assertEquals(199L, moneyboxRepository.findById(1L).get().getSum());
