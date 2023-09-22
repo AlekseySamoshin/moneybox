@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MoneyboxGatewayService {
     private final KafkaProducerService kafkaProducerService;
     public MoneyTransferDto sendTransfer(Long moneyboxId, Long sum, Boolean increase) {
-        MoneyTransferDto transfer = new MoneyTransferDto(null, moneyboxId, increase, sum);
+        MoneyTransferDto transfer = new MoneyTransferDto(null, null, moneyboxId, increase, sum);
         return kafkaProducerService.sendTransfer(transfer);
     }
 
