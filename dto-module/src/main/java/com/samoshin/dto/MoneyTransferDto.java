@@ -9,6 +9,7 @@ import lombok.*;
 public class MoneyTransferDto {
     private final Long id;
     private final Long moneyboxId;
+    private final Long transactionNumber;
     private final boolean increase;
     private final Long sum;
 

@@ -15,6 +15,9 @@ public class MoneyTransfer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "transaction_number")
+    private Long transactionNumber;
+
     @Column(name = "moneybox_id")
     private Long moneyboxId;
 

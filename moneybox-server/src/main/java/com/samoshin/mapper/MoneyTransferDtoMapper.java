@@ -11,6 +11,7 @@ public class MoneyTransferDtoMapper {
         return new MoneyTransferDto(
                 transfer.getId(),
                 transfer.getMoneyboxId(),
+                transfer.getTransactionNumber(),
                 transfer.isIncrease(),
                 transfer.getSum());
     }
@@ -18,6 +19,7 @@ public class MoneyTransferDtoMapper {
     public MoneyTransfer mapToTransfer(MoneyTransferDto transferDto) {
         return MoneyTransfer.builder()
                 .moneyboxId(transferDto.getMoneyboxId())
+                .transactionNumber(transferDto.getTransactionNumber())
                 .increase(transferDto.isIncrease())
                 .sum(transferDto.getSum())
                 .build();
