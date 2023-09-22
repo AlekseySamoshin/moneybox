@@ -18,6 +18,7 @@ public class MoneyTransferDto {
         return "MoneyTransfer[" +
                 "id=" + id +
                 ";moneyboxId=" + moneyboxId +
+                ";count=" + transactionNumber +
                 ";sum=" + sum +
                 ";increase=" + increase +
                 "]";

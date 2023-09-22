@@ -52,7 +52,7 @@ class KafkaProducerServiceTest {
 
     @BeforeEach
     void setup() {
-        moneyTransferDto = new MoneyTransferDto(1L, 1L, true, 99L);
+        moneyTransferDto = new MoneyTransferDto(1L, 1L, null, true, 99L);
         moneyboxDto = new MoneyboxDto(1L, 99L, List.of(moneyTransferDto));
         objectMapper = new ObjectMapper();
     }

@@ -60,8 +60,8 @@ public class TransactionProcessor {
 //            return input.leftJoin(countTable, (value, count) -> {
 //                        return new MoneyTransferDto(
 //                                value.getId(),
-//                                count,
 //                                value.getMoneyboxId(),
+//                                count,
 //                                value.isIncrease(),
 //                                value.getSum());
 //                    }
