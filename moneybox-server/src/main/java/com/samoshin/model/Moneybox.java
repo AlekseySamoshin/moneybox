@@ -18,9 +18,18 @@ public class Moneybox {
 
     private Long sum;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "money_transfers",
             joinColumns = @JoinColumn(name = "moneybox_id"),
             inverseJoinColumns = @JoinColumn(name = "id"))
     private List<MoneyTransfer> transfers;
+
+    @Override
+    public String toString() {
+        return "Moneybox[" +
+                "id=" + id +
+                ";sum=" + sum +
+                ";transers=" + transfers.size() +
+                "]";
+    }
 }
