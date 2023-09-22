@@ -14,7 +14,7 @@ public class AutoTransfer implements Runnable {
     private final TransferServiceClient client;
     private long transferSum = 0;
 
-    private Integer requestsQuantity = 1000;
+    private Integer requestsQuantity = 2000;
 
     @Override
     public void run() {
