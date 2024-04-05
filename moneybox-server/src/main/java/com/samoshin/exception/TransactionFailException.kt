@@ -1,7 +1,3 @@
-package com.samoshin.exception;
+package com.samoshin.exception
 
-public class TransactionFailException extends RuntimeException {
-    public TransactionFailException(String message) {
-        super(message);
-    }
-}
+class TransactionFailException(message: String?) : RuntimeException(message)

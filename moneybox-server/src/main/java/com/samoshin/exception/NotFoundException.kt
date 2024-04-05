@@ -1,7 +1,3 @@
-package com.samoshin.exception;
+package com.samoshin.exception
 
-public class NotFoundException extends RuntimeException {
-    public NotFoundException(String message) {
-        super(message);
-    }
-}
+class NotFoundException(message: String?) : RuntimeException(message)

@@ -1,21 +1,19 @@
-package com.samoshin.config;
+package com.samoshin.config
 
-import org.apache.kafka.common.serialization.Deserializer;
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.apache.kafka.common.serialization.Deserializer
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+import org.springframework.kafka.support.serializer.JsonDeserializer
 
-public class JsonErrorHandlingDeserializer<T> implements Deserializer<T> {
+class JsonErrorHandlingDeserializer<T>(targetType: Class<T>?) : Deserializer<T> {
+    private val errorHandlingDeserializer: ErrorHandlingDeserializer<T>
 
-    private final ErrorHandlingDeserializer<T> errorHandlingDeserializer;
-
-    public JsonErrorHandlingDeserializer(Class<T> targetType) {
-        JsonDeserializer<T> jsonDeserializer = new JsonDeserializer<>(targetType);
-        jsonDeserializer.addTrustedPackages("*");
-        this.errorHandlingDeserializer = new ErrorHandlingDeserializer<>(jsonDeserializer);
+    init {
+        val jsonDeserializer = JsonDeserializer(targetType)
+        jsonDeserializer.addTrustedPackages("*")
+        this.errorHandlingDeserializer = ErrorHandlingDeserializer(jsonDeserializer)
     }
 
-    @Override
-    public T deserialize(String topic, byte[] data) {
-        return errorHandlingDeserializer.deserialize(topic, data);
+    override fun deserialize(topic: String, data: ByteArray): T {
+        return errorHandlingDeserializer.deserialize(topic, data)
     }
 }
